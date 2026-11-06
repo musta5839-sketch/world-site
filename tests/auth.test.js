@@ -29,6 +29,19 @@ test('registration creates a user without exposing password hash', async () => {
   assert.notEqual(result.rows[0].password_hash, password);
 });
 
+test('registration rejects missing required fields', async () => {
+  const response = await request(app)
+    .post('/api/auth/register')
+    .send({});
+
+  assert.equal(response.status, 400);
+  assert.equal(response.body.success, false);
+  assert.equal(
+    response.body.error,
+    'Email, password and name are required'
+  );
+});
+
 test('registration rejects duplicate email', async () => {
   const response = await request(app)
     .post('/api/auth/register')
