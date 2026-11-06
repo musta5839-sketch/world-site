@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
-const { signToken, verifyToken } = require('../../src/utils/token');
+const { signToken, verifyToken, validateTokenConfig } = require('../../src/utils/token');
 
 function withSecret(secret, callback) {
   const previousSecret = process.env.JWT_SECRET;
@@ -22,6 +22,25 @@ function withSecret(secret, callback) {
     }
   }
 }
+
+
+test('validateTokenConfig accepts valid JWT configuration', () => {
+  withSecret('a'.repeat(32), () => {
+    assert.doesNotThrow(() => validateTokenConfig());
+  });
+});
+
+test('validateTokenConfig rejects missing JWT secret', () => {
+  withSecret(undefined, () => {
+    assert.throws(() => validateTokenConfig(), /JWT_SECRET/);
+  });
+});
+
+test('validateTokenConfig rejects short JWT secret', () => {
+  withSecret('short-secret', () => {
+    assert.throws(() => validateTokenConfig(), /JWT_SECRET/);
+  });
+});
 
 test('rejects missing JWT secret when signing', () => {
   assert.throws(

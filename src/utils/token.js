@@ -10,16 +10,28 @@ function getSecret() {
   return secret;
 }
 
+function getTokenOptions() {
+  return {
+    algorithm: 'HS256',
+    expiresIn: process.env.JWT_EXPIRES_IN || '15m',
+    issuer: 'world-site',
+    audience: 'world-site-client'
+  };
+}
+
+function validateTokenConfig() {
+  jwt.sign(
+    { sub: 'startup-validation' },
+    getSecret(),
+    getTokenOptions()
+  );
+}
+
 function signToken(user) {
   return jwt.sign(
     { sub: user.id },
     getSecret(),
-    {
-      algorithm: 'HS256',
-      expiresIn: process.env.JWT_EXPIRES_IN || '15m',
-      issuer: 'world-site',
-      audience: 'world-site-client'
-    }
+    getTokenOptions()
   );
 }
 
@@ -31,4 +43,4 @@ function verifyToken(token) {
   });
 }
 
-module.exports = { signToken, verifyToken };
+module.exports = { signToken, verifyToken, validateTokenConfig };
