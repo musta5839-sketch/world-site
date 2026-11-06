@@ -33,3 +33,23 @@ test('createUser rethrows unexpected repository errors unchanged', async () => {
     userRepository.create = originalCreate;
   }
 });
+
+test('getUserByEmail returns null without querying the repository for falsy email', async () => {
+  const originalFindByEmail = userRepository.findByEmail;
+  let calls = 0;
+
+  userRepository.findByEmail = async () => {
+    calls += 1;
+    return null;
+  };
+
+  try {
+    for (const email of [undefined, null, '']) {
+      assert.strictEqual(await userService.getUserByEmail(email), null);
+    }
+
+    assert.equal(calls, 0);
+  } finally {
+    userRepository.findByEmail = originalFindByEmail;
+  }
+});
