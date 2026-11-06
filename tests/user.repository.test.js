@@ -31,6 +31,13 @@ test('user CRUD operations', async () => {
 
   assert.equal(updated.name, 'Updated User');
 
+  const deactivated = await userService.updateUser(user.id, {
+    isActive: false
+  });
+
+  assert.equal(deactivated.name, 'Updated User');
+  assert.equal(deactivated.is_active, false);
+
   const deleted = await userService.deleteUser(user.id);
   assert.equal(deleted, true);
 
