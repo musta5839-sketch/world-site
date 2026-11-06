@@ -36,6 +36,11 @@ test('user CRUD operations', async () => {
 
   const missing = await userService.getUserById(user.id);
   assert.equal(missing, null);
+
+  const missingUpdate = await userService.updateUser(user.id, {
+    name: 'Should Not Exist'
+  });
+  assert.equal(missingUpdate, null);
 });
 
 test('duplicate email returns conflict', async () => {
