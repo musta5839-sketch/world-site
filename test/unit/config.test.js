@@ -110,3 +110,34 @@ test('freezes exported configuration', () => {
 
   assert.equal(Object.isFrozen(config), true);
 });
+
+
+test('loads defaults when dotenv provides no values', () => {
+  const dotenv = require('dotenv');
+  const originalConfig = dotenv.config;
+  const previousEnv = { ...process.env };
+
+  try {
+    for (const key of [
+      'PORT',
+      'NODE_ENV',
+      'DATABASE_URL',
+      'TEST_DATABASE_URL'
+    ]) {
+      delete process.env[key];
+    }
+
+    dotenv.config = () => ({ parsed: {} });
+    delete require.cache[configPath];
+
+    const config = require(configPath);
+
+    assert.equal(config.port, 3000);
+    assert.equal(config.environment, 'development');
+    assert.equal(config.databaseUrl, undefined);
+  } finally {
+    dotenv.config = originalConfig;
+    process.env = previousEnv;
+    delete require.cache[configPath];
+  }
+});
