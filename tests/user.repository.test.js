@@ -41,6 +41,9 @@ test('user CRUD operations', async () => {
     name: 'Should Not Exist'
   });
   assert.equal(missingUpdate, null);
+
+  const deletedAgain = await userService.deleteUser(user.id);
+  assert.equal(deletedAgain, false);
 });
 
 test('duplicate email returns conflict', async () => {
