@@ -106,6 +106,27 @@ test('login rejects unknown email', async () => {
   assert.equal(response.status, 401);
 });
 
+test('login rejects inactive users with correct credentials', async () => {
+  await pool.query(
+    'UPDATE users SET is_active = FALSE WHERE id = $1',
+    [userId]
+  );
+
+  try {
+    const response = await request(app)
+      .post('/api/auth/login')
+      .send({ email, password });
+
+    assert.equal(response.status, 401);
+    assert.equal(response.body.data?.token, undefined);
+  } finally {
+    await pool.query(
+      'UPDATE users SET is_active = TRUE WHERE id = $1',
+      [userId]
+    );
+  }
+});
+
 test.after(async () => {
   if (userId) {
     await pool.query('DELETE FROM users WHERE id = $1', [userId]);
