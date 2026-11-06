@@ -38,6 +38,14 @@ async function runMiddleware(token) {
   return nextError;
 }
 
+test('authenticate rejects whitespace-only Bearer credentials', async () => {
+  const error = await runMiddleware('   ');
+
+  assert.equal(error.name, 'Error');
+  assert.equal(error.statusCode, 401);
+  assert.equal(error.message, 'Authentication required');
+});
+
 test('authenticate normalizes NotBeforeError to 401', async () => {
   const token = createToken({
     notBefore: '10m'
