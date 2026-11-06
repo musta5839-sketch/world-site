@@ -4,7 +4,7 @@ const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const morgan = require('morgan');
-const rateLimit = require('express-rate-limit');
+const { apiLimiter } = require('./middleware/rate-limiters');
 const path = require('path');
 
 const notFound = require('./middleware/not-found');
@@ -38,12 +38,7 @@ if (config.environment !== 'test') {
   app.use(morgan('dev'));
 }
 
-app.use('/api', rateLimit({
-  windowMs: 15 * 60 * 1000,
-  limit: 100,
-  standardHeaders: 'draft-8',
-  legacyHeaders: false
-}));
+app.use('/api', apiLimiter);
 
 app.use('/api/auth', authRoutes);
 
