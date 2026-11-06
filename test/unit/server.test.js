@@ -211,3 +211,56 @@ test('rejects invalid server dependencies', () => {
     /pool\.end is required/
   );
 });
+
+test('default exit delegates forced shutdown to process.exit', () => {
+  setShuttingDown(false);
+
+  const originalExit = process.exit;
+  let observedExitCode;
+  let timerCallback;
+
+  const timer = {
+    unref() {}
+  };
+
+  try {
+    process.exit = (code) => {
+      observedExitCode = code;
+    };
+
+    const lifecycle = startServer({
+      app: {
+        listen() {
+          return {
+            close() {}
+          };
+        }
+      },
+      config: { port: 3000 },
+      pool: {
+        async end() {}
+      },
+      processRef: {
+        on() {}
+      },
+      logger: {
+        log() {},
+        error() {}
+      },
+      setTimer(callback) {
+        timerCallback = callback;
+        return timer;
+      },
+      clearTimer() {}
+    });
+
+    lifecycle.shutdown();
+    assert.equal(typeof timerCallback, 'function');
+    timerCallback();
+
+    assert.equal(observedExitCode, 1);
+  } finally {
+    process.exit = originalExit;
+    setShuttingDown(false);
+  }
+});
