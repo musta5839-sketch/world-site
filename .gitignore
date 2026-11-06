@@ -4,7 +4,6 @@ node_modules/
 .DS_Store
 
 # Local environment
-.env
 .env.*
 
 # Dependencies
@@ -21,3 +20,4 @@ reports/
 
 # Archived files
 archive/
+!.env.example
