@@ -4,6 +4,21 @@ const express = require('express');
 const request = require('supertest');
 const { createRateLimiter } = require('../src/middleware/rate-limiters');
 
+test('rate limiter uses the default limit of 100 when omitted', async () => {
+  const app = express();
+
+  app.use(createRateLimiter());
+
+  app.get('/test', (req, res) => {
+    res.sendStatus(200);
+  });
+
+  const response = await request(app).get('/test');
+
+  assert.equal(response.status, 200);
+  assert.match(response.headers.ratelimit || '', /100-in-15min/i);
+});
+
 test('rate limiter allows requests up to the configured limit', async () => {
   const app = express();
 
