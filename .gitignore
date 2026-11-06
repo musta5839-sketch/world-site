@@ -1,0 +1,23 @@
+node_modules/
+.env
+*.log
+.DS_Store
+
+# Local environment
+.env
+.env.*
+
+# Dependencies
+node_modules/
+
+# Generated coverage
+coverage/
+
+# Local backups
+*.bak
+
+# Generated reports
+reports/
+
+# Archived files
+archive/
