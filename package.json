@@ -18,7 +18,7 @@
     "audit:prod": "npm audit --omit=dev",
     "audit:full": "npm audit",
     "deps:inspect": "npm ls glob minimatch",
-    "test:coverage": "NODE_ENV=test c8 --all --include='src/**/*.js' --reporter=text --reporter=html --reporter=json node --test --check-coverage --lines 96 --statements 96 --functions 94 --branches 91"
+    "test:coverage": "NODE_ENV=test c8 --all --include='src/**/*.js' --reporter=text --reporter=html --reporter=json --check-coverage --lines 96 --statements 96 --functions 94 --branches 91 node --test"
   },
   "keywords": [],
   "type": "commonjs",
