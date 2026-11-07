@@ -37,3 +37,15 @@ is covered by project tests and a standalone minimal reproduction.
   - Functions: 100%
   - Lines: 100%
 - Migration discovery: passed for both current migration files.
+
+## Current Verified Baseline
+
+- Verified merged commit: 1b7fb43
+- Tests: 117 passed, 0 failed
+- Statements: 100%
+- Branches: 99.5%
+- Functions: 100%
+- Lines: 100%
+- Full dependency audit: 0 vulnerabilities
+- Production dependency audit: 0 vulnerabilities
+- Official coverage command: `npm run test:coverage`
