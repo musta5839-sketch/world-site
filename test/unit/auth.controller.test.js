@@ -2,6 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 
 const authService = require('../../src/services/auth.service');
+const userService = require('../../src/services/user.service');
 const authController = require('../../src/controllers/auth.controller');
 
 test('login uses the default JWT expiry when JWT_EXPIRES_IN is unset', async () => {
@@ -61,5 +62,42 @@ test('login uses the default JWT expiry when JWT_EXPIRES_IN is unset', async () 
     } else {
       process.env.JWT_EXPIRES_IN = originalExpiry;
     }
+  }
+});
+
+
+test('updateMe forwards a 404 error when the user does not exist', async () => {
+  const originalUpdateUser = userService.updateUser;
+  let nextError;
+  let responseSent = false;
+
+  try {
+    userService.updateUser = async () => null;
+
+    await authController.updateMe(
+      {
+        user: { id: 'missing-user' },
+        body: { name: 'Updated Name' }
+      },
+      {
+        status() {
+          responseSent = true;
+          return this;
+        },
+        json() {
+          responseSent = true;
+          return this;
+        }
+      },
+      (error) => {
+        nextError = error;
+      }
+    );
+
+    assert.equal(nextError.message, 'User not found');
+    assert.equal(nextError.statusCode, 404);
+    assert.equal(responseSent, false);
+  } finally {
+    userService.updateUser = originalUpdateUser;
   }
 });
