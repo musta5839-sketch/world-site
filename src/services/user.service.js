@@ -41,7 +41,39 @@ async function getUserByEmail(email) {
 }
 
 async function updateUser(id, data) {
-  return userRepository.updateById(id, data);
+  const allowedFields = ['name', 'isActive'];
+
+  if (
+    !data ||
+    typeof data !== 'object' ||
+    Array.isArray(data) ||
+    Object.keys(data).length === 0 ||
+    Object.keys(data).some((key) => !allowedFields.includes(key)) ||
+    (
+      Object.prototype.hasOwnProperty.call(data, 'name') &&
+      (typeof data.name !== 'string' || !data.name.trim())
+    ) ||
+    (
+      Object.prototype.hasOwnProperty.call(data, 'isActive') &&
+      typeof data.isActive !== 'boolean'
+    )
+  ) {
+    const error = new Error('Invalid user update data');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const updates = {};
+
+  if (Object.prototype.hasOwnProperty.call(data, 'name')) {
+    updates.name = data.name.trim();
+  }
+
+  if (Object.prototype.hasOwnProperty.call(data, 'isActive')) {
+    updates.isActive = data.isActive;
+  }
+
+  return userRepository.updateById(id, updates);
 }
 
 async function deleteUser(id) {

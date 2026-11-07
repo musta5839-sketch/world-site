@@ -10,5 +10,6 @@ router.use(authLimiter);
 router.post('/register', controller.register);
 router.post('/login', controller.login);
 router.get('/me', authenticate, controller.me);
+router.patch('/me', authenticate, controller.updateMe);
 
 module.exports = router;
